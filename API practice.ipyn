@@ -1,0 +1,595 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "cdf00aed",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Use the citipy module to determine city based on latitude and longitude.\n",
+    "from citipy import citipy"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "389a7ee0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Create a practice set of random latitude and longitude combinations.\n",
+    "x = [25.12903645, 25.92017388, 26.62509167, -59.98969384, 37.30571269]\n",
+    "y = [-67.59741259, 11.09532135, 74.84233102, -76.89176677, -61.13376282]\n",
+    "coordinates = zip(x, y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "2cc16d89",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "cockburn town tc\n",
+      "gat ly\n",
+      "parvatsar in\n",
+      "punta arenas cl\n",
+      "saint george bm\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Use the tuple() function to display the latitude and longitude combinations.\n",
+    "for coordinate in coordinates: \n",
+    "    print(citipy.nearest_city(coordinate[0], coordinate[1]).city_name,\n",
+    "          citipy.nearest_city(coordinate[0], coordinate[1]).country_code)  "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "ac750e79",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Create a list for holding the cities.\n",
+    "cities = []\n",
+    "\n",
+    "# Identify the nearest city for each latitude and longitude combination.\n",
+    "for coordinate in coordinates: \n",
+    "    city = citipy.nearest_city(coordinate[0], coordinate[1]).city_name\n",
+    "\n",
+    "    # If the city is unique, then we will add it to the cities list.\n",
+    "    if city not in cities: \n",
+    "        cities.append(city)\n",
+    "\n",
+    "# Print the city count to confirm sufficient count.\n",
+    "len(cities)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "8754c10a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Import the requests library.\n",
+    "import requests\n",
+    "\n",
+    "# Import the API key.\n",
+    "from config import weather_api_key"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "9ab2c64a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}8d322334689ad755343f0f7ad1a1ab1d\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Starting URL for Weather Map API Call.\n",
+    "url = \"http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}\" + weather_api_key\n",
+    "print(url)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "6b098ad8",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "http://api.openweathermap.org/data/2.5/weather?units=Imperial&APPID=8d322334689ad755343f0f7ad1a1ab1d\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Starting URL for Weather Map API Call.\n",
+    "url = \"http://api.openweathermap.org/data/2.5/weather?units=Imperial&APPID=\" + weather_api_key\n",
+    "print(url)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "2f7772e8",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "http://api.openweathermap.org/data/2.5/weather?units=Imperial&APPID=8d322334689ad755343f0f7ad1a1ab1d&q=Boston\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Create an endpoint URL for a city.\n",
+    "city_url = url + \"&q=\" + \"Boston\"\n",
+    "print(city_url)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "9a8cdf96",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<Response [200]>"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Make a 'Get' request for the city weather.\n",
+    "city_weather = requests.get(city_url)\n",
+    "city_weather"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "0ae4a1c8",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<Response [404]>"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Create an endpoint URL for a city.\n",
+    "city_url = url + \"&q=\" + \"Bston\"\n",
+    "city_weather = requests.get(city_url)\n",
+    "city_weather"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "8ae06b38",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<Response [200]>"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Create an endpoint URL for a city.\n",
+    "city_url = url + \"&q=\" + \"Boston\"\n",
+    "city_weather = requests.get(city_url)\n",
+    "city_weather"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "e286c5b9",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'{\"coord\":{\"lon\":-71.0598,\"lat\":42.3584},\"weather\":[{\"id\":804,\"main\":\"Clouds\",\"description\":\"overcast clouds\",\"icon\":\"04d\"}],\"base\":\"stations\",\"main\":{\"temp\":62.55,\"feels_like\":60.33,\"temp_min\":57.94,\"temp_max\":65.07,\"pressure\":1012,\"humidity\":39},\"visibility\":10000,\"wind\":{\"speed\":20.71,\"deg\":200,\"gust\":27.63},\"clouds\":{\"all\":100},\"dt\":1650123370,\"sys\":{\"type\":2,\"id\":2013408,\"country\":\"US\",\"sunrise\":1650103290,\"sunset\":1650151567},\"timezone\":-14400,\"id\":4930956,\"name\":\"Boston\",\"cod\":200}'"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Get the text of the 'Get' request.\n",
+    "city_weather.text"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "0e11499d",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'coord': {'lon': -71.0598, 'lat': 42.3584},\n",
+       " 'weather': [{'id': 804,\n",
+       "   'main': 'Clouds',\n",
+       "   'description': 'overcast clouds',\n",
+       "   'icon': '04d'}],\n",
+       " 'base': 'stations',\n",
+       " 'main': {'temp': 62.55,\n",
+       "  'feels_like': 60.33,\n",
+       "  'temp_min': 57.94,\n",
+       "  'temp_max': 65.07,\n",
+       "  'pressure': 1012,\n",
+       "  'humidity': 39},\n",
+       " 'visibility': 10000,\n",
+       " 'wind': {'speed': 20.71, 'deg': 200, 'gust': 27.63},\n",
+       " 'clouds': {'all': 100},\n",
+       " 'dt': 1650123370,\n",
+       " 'sys': {'type': 2,\n",
+       "  'id': 2013408,\n",
+       "  'country': 'US',\n",
+       "  'sunrise': 1650103290,\n",
+       "  'sunset': 1650151567},\n",
+       " 'timezone': -14400,\n",
+       " 'id': 4930956,\n",
+       " 'name': 'Boston',\n",
+       " 'cod': 200}"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Get the JSON text of the 'Get' request.\n",
+    "city_weather.json()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "f01c6e3e",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "City Weather found.\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Create an endpoint URL for a city.\n",
+    "city_url = url + \"&q=\" + \"Boston\"\n",
+    "city_weather = requests.get(city_url)\n",
+    "if city_weather.status_code == 200:\n",
+    "    print(f\"City Weather found.\")\n",
+    "else:\n",
+    "    print(f\"City weather not found.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "88bac695",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "City weather not found.\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Create an endpoint URL for a city.\n",
+    "city_url = url + \"&q=\" + \"Bston\"\n",
+    "city_weather = requests.get(city_url)\n",
+    "if city_weather.status_code == 200:\n",
+    "    print(f\"City Weather found.\")\n",
+    "else:\n",
+    "    print(f\"City weather not found.\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "4de432c3",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'coord': {'lon': -71.0598, 'lat': 42.3584},\n",
+       " 'weather': [{'id': 804,\n",
+       "   'main': 'Clouds',\n",
+       "   'description': 'overcast clouds',\n",
+       "   'icon': '04d'}],\n",
+       " 'base': 'stations',\n",
+       " 'main': {'temp': 62.55,\n",
+       "  'feels_like': 60.33,\n",
+       "  'temp_min': 57.94,\n",
+       "  'temp_max': 65.07,\n",
+       "  'pressure': 1012,\n",
+       "  'humidity': 39},\n",
+       " 'visibility': 10000,\n",
+       " 'wind': {'speed': 20.71, 'deg': 200, 'gust': 27.63},\n",
+       " 'clouds': {'all': 100},\n",
+       " 'dt': 1650123370,\n",
+       " 'sys': {'type': 2,\n",
+       "  'id': 2013408,\n",
+       "  'country': 'US',\n",
+       "  'sunrise': 1650103290,\n",
+       "  'sunset': 1650151567},\n",
+       " 'timezone': -14400,\n",
+       " 'id': 4930956,\n",
+       " 'name': 'Boston',\n",
+       " 'cod': 200}"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Create an endpoint URL for a city.\n",
+    "city_url = url + \"&q=\" + \"Boston\"\n",
+    "city_weather = requests.get(city_url)\n",
+    "city_weather.json()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "8e25866a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Get the JSON data.\n",
+    "boston_data = city_weather.json()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "858e8c7c",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'type': 2,\n",
+       " 'id': 2013408,\n",
+       " 'country': 'US',\n",
+       " 'sunrise': 1650103290,\n",
+       " 'sunset': 1650151567}"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "boston_data['sys']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "eb4f92ac",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'US'"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "boston_data['sys'][\"country\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "67c9b130",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1650151567"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "boston_data['sys'][\"sunrise\"]\n",
+    "boston_data['sys'][\"sunset\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "2dd6aee4",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1650123370"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "boston_data[\"dt\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "id": "8ca1e410",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "65.07"
+      ]
+     },
+     "execution_count": 26,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "boston_data[\"main\"][\"temp_max\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "id": "5a6d366b",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "42.3584 -71.0598 65.07 39 100 20.71\n"
+     ]
+    }
+   ],
+   "source": [
+    "lat = boston_data[\"coord\"][\"lat\"]\n",
+    "lng = boston_data[\"coord\"][\"lon\"]\n",
+    "max_temp = boston_data[\"main\"][\"temp_max\"]\n",
+    "humidity = boston_data[\"main\"][\"humidity\"]\n",
+    "clouds = boston_data[\"clouds\"][\"all\"]\n",
+    "wind = boston_data[\"wind\"][\"speed\"]\n",
+    "print(lat, lng, max_temp, humidity, clouds, wind)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "id": "5ddc363d",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'2022-04-16 15:36:10'"
+      ]
+     },
+     "execution_count": 33,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Import the datetime module from the datetime library.\n",
+    "from datetime import datetime\n",
+    "# Get the date from the JSON file.\n",
+    "date = boston_data[\"dt\"]\n",
+    "# Convert the UTC date to a date format with year, month, day, hours, minutes, and seconds.\n",
+    "datetime.utcfromtimestamp(date).strftime('%Y-%m-%d %H:%M:%S')\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9bd07421",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "PythonData",
+   "language": "python",
+   "name": "pythondata"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.11"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
